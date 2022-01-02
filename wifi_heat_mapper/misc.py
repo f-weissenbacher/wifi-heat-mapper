@@ -1,3 +1,6 @@
+from io import StringIO
+import pandas as pd
+
 from wifi_heat_mapper.debugger import log_arguments
 import subprocess
 from shutil import which
@@ -147,6 +150,24 @@ def verify_interface(target_interface):
     if check_interface != "up":
         print("Interface {0} is not ready.".format(target_interface))
         exit(1)
+
+
+def process_wifi_metrics(target_interface):
+    """Get metrics from a wireless interface using windows tools.
+
+    Args:
+        target_interface (str): The network interface to
+        capture metrics from.
+
+    Returns:
+        dict: A dictionary containing the metrics and
+        their values as corresponding (key, value) pairs.
+    """
+
+    mac_cmd = "getmac / FO CSV / NH / V"
+    mac_output = get_application_output(mac_cmd)
+    mac_results = pd.read_csv(StringIO(mac_output))
+
 
 
 def process_iw(target_interface):
